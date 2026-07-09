@@ -1,0 +1,12 @@
+# Ignore datasets
+*.csv
+*.zip
+*.parquet
+
+# Ignore models
+*.pkl
+*.joblib
+
+# Python cache
+__pycache__/
+.ipynb_checkpoints/
