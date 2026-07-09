@@ -1,118 +1,184 @@
 # 🛒 Quick Commerce Demand Forecasting & Inventory Optimization
 
-## 📌 Project Overview
+## 📖 Overview
 
-Quick commerce companies such as Blinkit, Zepto, and Swiggy Instamart rely on accurate demand forecasting to maintain optimal inventory levels, reduce stock-outs, and improve customer satisfaction.
+Quick commerce platforms such as **Blinkit, Zepto, Swiggy Instamart, and BigBasket Now** rely on accurate demand forecasting to ensure product availability while minimizing excess inventory.
 
-This project explores customer purchasing behavior using the Instacart Market Basket Analysis dataset and performs extensive Exploratory Data Analysis (EDA) to uncover demand patterns that can support inventory optimization and future forecasting models.
-
-> **Note:** The original Instacart dataset does not contain store-level information. For quick commerce simulation, virtual dark stores were randomly assigned to orders for analytical purposes.
+This project builds an end-to-end demand forecasting pipeline using the **Instacart Market Basket Analysis** dataset. The project focuses on understanding customer purchasing behavior, engineering forecasting features, and building an XGBoost-based demand forecasting model to support inventory optimization.
 
 ---
 
-## 🎯 Business Objective
+# 🎯 Business Problem
 
-The primary objectives of this project are to:
+Retailers frequently face two major inventory challenges:
 
-* Analyze customer purchasing behavior.
-* Identify peak shopping hours and demand trends.
-* Discover high-demand products and departments.
-* Measure customer reorder behavior.
-* Generate business insights for inventory planning.
-* Prepare a clean time-series dataset for demand forecasting.
+* **Stock-outs**, resulting in lost sales and poor customer experience.
+* **Overstocking**, leading to unnecessary inventory holding costs.
+
+The objective of this project is to forecast future product demand so inventory can be replenished proactively and efficiently.
 
 ---
 
-## 📂 Dataset
+# 📂 Dataset
 
-**Dataset:** Instacart Market Basket Analysis
+**Source:** Instacart Market Basket Analysis (Kaggle)
 
-The project uses the following files:
+### Files Used
 
-* `orders.csv`
-* `order_products__prior.csv`
-* `products.csv`
-* `aisles.csv`
-* `departments.csv`
+* orders.csv
+* order_products__prior.csv
+* products.csv
+* aisles.csv
+* departments.csv
 
-After merging these datasets, a unified transactional dataset was created for analysis.
+The datasets were merged into a single analytical dataset containing customer orders, product information, department information, and purchasing behavior.
+
+> **Note:** The original Instacart dataset does not contain store-level information. This project focuses on product-level demand forecasting.
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠 Tech Stack
 
 * Python
 * Pandas
 * NumPy
 * Matplotlib
 * Seaborn
+* Scikit-learn
+* XGBoost
 * Jupyter Notebook
 
 ---
 
-## 📊 Data Preparation
+# 📊 Data Preparation
 
 The following preprocessing steps were performed:
 
-* Merged all relational tables into a single dataframe.
-* Checked data types and dataset structure.
+* Merged multiple relational datasets.
+* Performed data quality checks.
 * Identified missing values.
-* Verified duplicate records.
-* Simulated dark-store IDs for quick commerce analysis.
-* Prepared the dataset for exploratory analysis.
+* Removed duplicate records.
+* Conducted exploratory data analysis.
+* Constructed a product-level daily demand time series.
+* Engineered forecasting features.
 
 ---
 
-## 📈 Exploratory Data Analysis
+# 📈 Exploratory Data Analysis
 
-The EDA focused on understanding customer purchasing behavior and product demand.
+The project investigates customer purchasing behavior through comprehensive exploratory analysis.
 
-### Analysis Performed
+### Key Analyses
 
-* Order distribution by hour of the day
+* Order distribution by hour of day
 * Order distribution by weekday
 * Top-selling products
 * Top-performing aisles
 * Department-wise reorder rate
 * Basket size distribution
-* Days between consecutive orders
+* Days since previous order
 * Product reorder behavior
-* Store-wise order distribution (simulated)
-* SKU demand distribution
+* Product demand distribution
 * Correlation analysis
 
 ---
 
-## 💡 Business Insights
+# 💼 Business Questions Solved
 
-### 1. Peak Shopping Hours
+## 1. When do customers place the most orders?
 
-Customer purchases are concentrated during specific hours of the day, indicating periods where inventory replenishment and delivery resources should be prioritized.
-
----
-
-### 2. High Reorder Categories
-
-Departments such as fresh produce and daily essentials demonstrate significantly higher reorder rates, suggesting strong customer loyalty and the need for higher safety stock.
+Understanding peak ordering hours helps optimize workforce scheduling and inventory replenishment.
 
 ---
 
-### 3. Product Demand Concentration
+## 2. Which departments have the highest reorder rates?
 
-A relatively small number of products account for a large share of total orders, highlighting the importance of prioritizing these fast-moving SKUs in inventory planning.
-
----
-
-## 📊 Data Characteristics
-
-* Large-scale transactional dataset with millions of purchase records.
-* Highly skewed demand distribution.
-* More than half of SKU-date observations contain zero demand after time-series preparation.
-* Demand follows a long-tail distribution with a few extremely popular products.
+Identifies product categories with strong customer loyalty that require higher inventory availability.
 
 ---
 
-## 📁 Project Structure
+## 3. Which products generate the highest demand?
+
+Highlights fast-moving SKUs that should receive priority during inventory planning.
+
+---
+
+# ⚙️ Feature Engineering
+
+The forecasting model uses multiple time-series features, including:
+
+* Day of Week
+* Month
+* Day of Year
+* Lag-1 Demand
+* Lag-3 Demand
+* Lag-7 Demand
+* Lag-14 Demand
+* 7-Day Rolling Mean
+* 14-Day Rolling Mean
+* 7-Day Rolling Standard Deviation
+
+These features capture demand trends, seasonality, and short-term purchasing patterns.
+
+---
+
+# 🤖 Model
+
+The final forecasting model was built using **XGBoost Regressor**.
+
+XGBoost was selected because it:
+
+* Handles nonlinear relationships effectively.
+* Performs well on sparse demand data.
+* Trains significantly faster than deep learning models.
+* Produces interpretable feature importance.
+* Is widely adopted for structured retail forecasting problems.
+
+---
+
+# 📊 Model Performance
+
+| Metric                                |      Score |
+| ------------------------------------- | ---------: |
+| Mean Absolute Error (MAE)             |   **0.55** |
+| Root Mean Squared Error (RMSE)        |   **1.98** |
+| Mean Absolute Percentage Error (MAPE) | **40.90%** |
+
+### Performance Interpretation
+
+The XGBoost model achieved a low Mean Absolute Error of **0.55 units**, indicating that demand predictions were generally close to actual demand.
+
+Although the MAPE appears relatively high, the dataset contains a large number of zero- and low-demand observations. Percentage-based metrics tend to overestimate forecasting error under such conditions. Therefore, MAE and RMSE provide a more reliable assessment of forecasting performance.
+
+---
+
+# 📊 Key Business Insights
+
+### 📌 Peak Shopping Hours
+
+Customer demand is concentrated during specific hours of the day, suggesting that staffing and inventory replenishment should be prioritized during peak periods.
+
+---
+
+### 📌 High Reorder Categories
+
+Essential product categories exhibit significantly higher reorder rates, indicating consistent customer demand and the need for higher safety stock.
+
+---
+
+### 📌 Fast-Moving Products
+
+A relatively small number of products contribute disproportionately to total demand. Prioritizing these high-demand SKUs can reduce stock-outs and improve product availability.
+
+---
+
+### 📌 Demand Characteristics
+
+The dataset exhibits highly intermittent demand, with many product-day combinations recording zero or very low sales. This behavior reflects real-world retail demand patterns and motivated the use of feature-based machine learning for forecasting.
+
+---
+
+# 📁 Project Structure
 
 ```text
 Quick-Commerce-Demand-Forecasting/
@@ -122,7 +188,9 @@ Quick-Commerce-Demand-Forecasting/
 │   └── processed/
 │
 ├── notebooks/
-│   └── 01_EDA.ipynb
+│   ├── 01_EDA.ipynb
+│   ├── 02_Feature_Engineering.ipynb
+│   └── 03_XGBoost_Forecasting.ipynb
 │
 ├── images/
 │
@@ -133,37 +201,35 @@ Quick-Commerce-Demand-Forecasting/
 
 ---
 
-## 🚀 Current Progress
+# 🚀 Future Improvements
 
-* ✅ Data Collection
-* ✅ Data Cleaning
-* ✅ Data Integration
-* ✅ Feature Preparation
-* ✅ Exploratory Data Analysis
-* ⏳ Time Series Dataset Construction
-* ⏳ Feature Engineering
-* ⏳ Demand Forecasting using XGBoost
-* ⏳ Deep Learning (LSTM)
-* ⏳ Streamlit Dashboard
+* Build an interactive Streamlit dashboard.
+* Integrate Power BI dashboards for business reporting.
+* Incorporate promotional and pricing features.
+* Explore hierarchical demand forecasting.
+* Evaluate additional forecasting algorithms using real timestamped retail datasets.
 
 ---
 
-## 📌 Future Work
+# 📚 Key Skills Demonstrated
 
-The next phase of the project includes:
-
-* Building a daily demand time-series dataset.
-* Creating lag and rolling statistical features.
-* Training an XGBoost demand forecasting model.
-* Comparing forecasting performance with an LSTM model.
-* Developing an interactive Streamlit dashboard for inventory monitoring.
+* Data Cleaning
+* Data Wrangling
+* Exploratory Data Analysis
+* Feature Engineering
+* Time Series Forecasting
+* Machine Learning
+* XGBoost
+* Model Evaluation
+* Business Insight Generation
+* Inventory Analytics
 
 ---
 
-## 📬 Author
+# 👩‍💻 Author
 
 **Yashita Kumari**
 
-Aspiring Data Analyst | SQL | Python | Power BI | Machine Learning
+**Aspiring Data Analyst | SQL | Python | Power BI | Machine Learning**
 
-Passionate about solving real-world business problems using data-driven insights.
+Passionate about transforming data into actionable business insights through analytics, visualization, and predictive modeling.
